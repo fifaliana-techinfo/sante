@@ -1,0 +1,500 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#4f46e5">
+<title>ReproSanté — Santé reproductive</title>
+<style>
+:root {
+  --bg:#f5f6fc; --card:#fff; --text:#202653;
+  --muted:#69718c; --primary:#5145cd; --border:#e4e7f4;
+  --pink:#e83e99; --green:#07885c; --shadow:0 8px 30px #25265b0b;
+}
+body.dark {
+  --bg:#111629; --card:#1b233b; --text:#f2f4ff;
+  --muted:#bac3df; --primary:#9990ff; --border:#333e5c;
+  --shadow:0 8px 30px #0002;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;background:var(--bg);color:var(--text);
+  font:15px/1.6 system-ui,-apple-system,Segoe UI,sans-serif;
+  transition:background .2s,color .2s;
+}
+button,input,select {font:inherit}
+button {cursor:pointer}
+header {
+  background:var(--card);border-bottom:1px solid var(--border);
+  padding:15px 5%;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;flex-wrap:wrap;
+}
+.brand {font-size:22px;font-weight:800;color:var(--primary)}
+.brand small {display:block;font-size:12px;font-weight:400;color:var(--muted)}
+.header-actions {display:flex;gap:8px;flex-wrap:wrap}
+.btn {
+  border:1px solid var(--border);border-radius:12px;padding:10px 15px;
+  background:var(--card);color:var(--text);
+}
+.btn.primary {background:var(--primary);color:white;border:0}
+.layout {
+  max-width:1440px;margin:auto;padding:24px;
+  display:grid;grid-template-columns:220px minmax(0,1fr) 270px;gap:20px;
+}
+nav,.card,.hero {background:var(--card);border:1px solid var(--border);
+  border-radius:18px;box-shadow:var(--shadow)}
+nav {padding:12px;height:max-content;position:sticky;top:12px}
+nav button {
+  width:100%;text-align:left;margin:4px 0;padding:12px;
+  background:transparent;border:0;border-radius:10px;color:var(--text);
+}
+nav button:hover,nav button.active {background:#eeeaff;color:var(--primary)}
+body.dark nav button:hover,body.dark nav button.active {background:#303052;color:#c9c4ff}
+main {min-width:0}
+.hero {
+  padding:25px;margin-bottom:20px;
+  background:linear-gradient(120deg,#fce7f3,#eef2ff 75%);
+  color:#28275c;
+}
+.hero h1 {font-size:clamp(24px,3vw,34px);line-height:1.2;margin:0 0 10px}
+.hero p {margin:0}
+.eyebrow {color:#c02683;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:1px}
+.card {padding:22px;margin-bottom:20px}
+h2 {font-size:21px;margin:0 0 5px}
+h3 {font-size:16px;margin:0 0 10px}
+.muted {color:var(--muted)}
+.field {display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-top:18px}
+.field label {display:block;font-size:13px;margin-bottom:5px}
+.field input,.field select {
+  padding:12px;border:1px solid var(--border);border-radius:10px;
+  background:var(--card);color:var(--text);width:100%;min-width:0;
+}
+.field .grow {flex:1;min-width:180px}
+.results {display:none}
+.results.show {display:block}
+.metrics {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}
+.metric {border:1px solid var(--border);border-radius:14px;padding:16px;min-width:0}
+.metric .value {font-weight:800;font-size:19px;margin:8px 0;color:var(--primary)}
+.metric.pink .value {color:var(--pink)}
+.metric.green .value {color:var(--green)}
+.metric p {font-size:13px;color:var(--muted);margin:0}
+.timeline {display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin:14px 0}
+.day {
+  aspect-ratio:1;display:grid;place-items:center;border-radius:50%;
+  font-size:12px;background:var(--bg);color:var(--text);
+}
+.day.period {background:#f9a8d4;color:#831843}
+.day.fertile {background:#a7f3d0;color:#065f46}
+.day.ovulation {background:#5145cd;color:white}
+.legend {display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.dot {display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px}
+.notice {background:#eff6ff;color:#1e40af;border-radius:12px;padding:14px;font-size:13px}
+body.dark .notice {background:#202f4a;color:#c7dcff}
+.side-card {margin-bottom:15px;padding:18px}
+.side-card p {font-size:13px;margin:6px 0;color:var(--muted)}
+.side-card li {font-size:13px;margin:9px 0}
+ul {padding-left:18px}
+footer {text-align:center;color:var(--muted);font-size:12px;padding:20px}
+section[id] {scroll-margin-top:15px}
+@media(max-width:1050px) {
+  .layout {grid-template-columns:180px minmax(0,1fr)}
+  aside {grid-column:2}
+}
+@media(max-width:650px) {
+  .layout {grid-template-columns:1fr;padding:12px;gap:12px}
+  nav {position:static;display:flex;overflow:auto;gap:5px}
+  nav button {width:auto;white-space:nowrap;flex-shrink:0}
+  aside {grid-column:1}
+  .hero,.card {padding:17px}
+  .metrics {grid-template-columns:1fr 1fr;gap:8px}
+  .metric {padding:11px}
+  .metric .value {font-size:16px}
+  header {padding:12px}
+}
+@media(max-width:360px) {
+  .metrics {grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">♥ ReproSanté
+    <small id="subtitle">Votre santé reproductive, notre priorité</small>
+  </div>
+  <div class="header-actions">
+    <button class="btn" id="langBtn">🇲🇬 Malagasy</button>
+    <button class="btn" id="themeBtn">🌙 Mode sombre</button>
+  </div>
+</header>
+
+<div class="layout">
+<nav aria-label="Navigation principale">
+  <button class="active" data-target="accueil" data-fr="⌂ Accueil" data-mg="⌂ Fandraisana">⌂ Accueil</button>
+  <button data-target="calcul" data-fr="♡ Mon cycle" data-mg="♡ Ny tsingerina">♡ Mon cycle</button>
+  <button data-target="conseils" data-fr="✚ Conseils santé" data-mg="✚ Torohevitra">✚ Conseils santé</button>
+  <button data-target="faq" data-fr="? Questions fréquentes" data-mg="? Fanontaniana">? Questions fréquentes</button>
+</nav>
+
+<main>
+<section class="hero" id="accueil">
+  <div class="eyebrow" id="eyebrow">Espace santé féminine</div>
+  <h1 id="heroTitle">Comprendre votre cycle, prendre soin de vous.</h1>
+  <p id="heroText">Obtenez des estimations de votre cycle menstruel et découvrez des informations pour mieux comprendre votre santé reproductive.</p>
+</section>
+
+<section class="card" id="calcul">
+  <h2 id="calcTitle">♡ Calculateur du cycle menstruel</h2>
+  <p class="muted" id="calcIntro">Entrez le premier jour de vos dernières règles.</p>
+
+  <form id="cycleForm">
+    <div class="field">
+      <div class="grow">
+        <label id="dateLabel" for="lastPeriod">Date de début des dernières règles</label>
+        <input id="lastPeriod" type="date" required>
+      </div>
+      <div style="width:140px">
+        <label id="lengthLabel" for="cycleLength">Durée du cycle</label>
+        <select id="cycleLength">
+          <option value="21">21 jours</option><option value="22">22 jours</option>
+          <option value="23">23 jours</option><option value="24">24 jours</option>
+          <option value="25">25 jours</option><option value="26">26 jours</option>
+          <option value="27">27 jours</option><option value="28" selected>28 jours</option>
+          <option value="29">29 jours</option><option value="30">30 jours</option>
+          <option value="31">31 jours</option><option value="32">32 jours</option>
+          <option value="33">33 jours</option><option value="34">34 jours</option>
+          <option value="35">35 jours</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <button class="btn primary" type="submit" id="calculateBtn">Calculer mon cycle →</button>
+      <button class="btn" type="reset" id="resetBtn">Effacer</button>
+    </div>
+  </form>
+
+  <div class="results" id="results" aria-live="polite">
+    <hr style="border:0;border-top:1px solid var(--border);margin:22px 0">
+    <h3 id="resultTitle">Vos estimations</h3>
+    <p class="muted" id="resultDescription"></p>
+    <div class="metrics">
+      <div class="metric pink">
+        <h3 id="nextLabel">Prochaines règles</h3>
+        <div class="value" id="nextDate">—</div>
+        <p id="nextHint">Date estimée</p>
+      </div>
+      <div class="metric">
+        <h3 id="ovulationLabel">Ovulation estimée</h3>
+        <div class="value" id="ovulationDate">—</div>
+        <p id="ovulationHint">Pas une certitude médicale</p>
+      </div>
+      <div class="metric green">
+        <h3 id="fertileLabel">Période fertile estimée</h3>
+        <div class="value" id="fertileDates">—</div>
+        <p id="fertileHint">La grossesse est possible autour de l'ovulation</p>
+      </div>
+      <div class="metric">
+        <h3 id="dayLabel">Jour du cycle</h3>
+        <div class="value" id="cycleDay">—</div>
+        <p id="dayHint">Calculé à partir de la date saisie</p>
+      </div>
+    </div>
+
+    <h3 id="timelineTitle">Visualisation du cycle</h3>
+    <div class="timeline" id="timeline"></div>
+    <div class="legend">
+      <span><i class="dot" style="background:#f9a8d4"></i><span id="legendPeriod">Règles (estimation)</span></span>
+      <span><i class="dot" style="background:#a7f3d0"></i><span id="legendFertile">Période fertile</span></span>
+      <span><i class="dot" style="background:#5145cd"></i><span id="legendOvu">Ovulation</span></span>
+    </div>
+    <div class="notice" style="margin-top:20px" id="medicalNote"></div>
+  </div>
+</section>
+
+<section class="card" id="conseils">
+  <h2 id="tipsTitle">✚ Conseils pour votre santé</h2>
+  <ul id="tipsList">
+    <li>Notez les dates de vos règles pour mieux connaître votre cycle.</li>
+    <li>Utilisez un test de grossesse si vos règles sont en retard.</li>
+    <li>Un préservatif réduit le risque d'infections sexuellement transmissibles et de grossesse.</li>
+    <li>Consultez un professionnel de santé en cas de douleurs importantes ou de saignements inhabituels.</li>
+  </ul>
+</section>
+
+<section class="card" id="faq">
+  <h2 id="faqTitle">Questions fréquentes</h2>
+  <details>
+    <summary id="q1">Quel est le 14ᵉ jour du cycle ?</summary>
+    <p id="a1">Pour un cycle de 28 jours, l'ovulation peut se produire vers le 14ᵉ jour, mais cela varie. Ce calcul ne confirme pas l'ovulation.</p>
+  </details>
+  <details>
+    <summary id="q2">Quels jours permettent une grossesse ?</summary>
+    <p id="a2">Une grossesse est possible après un rapport vaginal non protégé pendant la période fertile, et le calendrier ne permet pas d'exclure ce risque les autres jours.</p>
+  </details>
+  <details>
+    <summary id="q3">Puis-je éviter une grossesse avec ce calendrier ?</summary>
+    <p id="a3">Non, cette estimation seule n'est pas une méthode contraceptive fiable. Demandez conseil à un professionnel de santé pour choisir une contraception adaptée.</p>
+  </details>
+  <details>
+    <summary id="q4">Quand faire un test de grossesse ?</summary>
+    <p id="a4">Un test urinaire est généralement utile à partir du premier jour de retard des règles. Si vous ne connaissez pas la date prévue, faites-le au moins 21 jours après le dernier rapport non protégé.</p>
+  </details>
+</section>
+</main>
+
+<aside>
+  <section class="card side-card">
+    <h3 id="factsTitle">Informations essentielles</h3>
+    <p><b id="fact1">Cycle menstruel</b><br><span id="fact1Text">Souvent entre 21 et 35 jours chez l'adulte.</span></p>
+    <p><b id="fact2">Durée des règles</b><br><span id="fact2Text">Variable, souvent de quelques jours.</span></p>
+    <p><b id="fact3">Ovulation</b><br><span id="fact3Text">Survient souvent environ 14 jours avant les prochaines règles.</span></p>
+  </section>
+  <section class="card side-card">
+    <h3 id="careTitle">♥ Prenez soin de vous</h3>
+    <p id="careText">Chaque personne est différente. Votre cycle peut varier d'un mois à l'autre.</p>
+  </section>
+  <section class="card side-card">
+    <h3 id="urgentTitle">Quand consulter ?</h3>
+    <p id="urgentText">Douleur intense, saignement abondant, malaise ou suspicion de grossesse avec douleur : demandez rapidement des soins. En cas de douleur intense ou de malaise, consultez en urgence.</p>
+  </section>
+</aside>
+</div>
+
+<footer id="footerText">ReproSanté — Outil éducatif, ne remplace pas une consultation médicale. Les données restent dans cette page et ne sont pas envoyées à un serveur.</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+let language = "fr";
+
+const translations = {
+mg: {
+ subtitle:"Ny fahasalamanao no laharam-pahamehanay",
+ eyebrow:"Fahasalamana ara-pananahana",
+ heroTitle:"Fantaro ny tsingerinao, karakarao ny fahasalamanao.",
+ heroText:"Mahazoa tombana momba ny tsingerim-bolana sy fampahalalana momba ny fahasalamana ara-pananahana.",
+ calcTitle:"♡ Kajy ny tsingerim-bolana",
+ calcIntro:"Ampidiro ny andro voalohan'ny fadimbolanao farany.",
+ dateLabel:"Daty nanombohan'ny fadimbolana farany",
+ lengthLabel:"Halavan'ny tsingerina",
+ calculateBtn:"Kajio ny tsingeriko →", resetBtn:"Fafao",
+ resultTitle:"Tombana momba ny tsingerinao",
+ nextLabel:"Fadimbolana manaraka", nextHint:"Daty tombanana",
+ ovulationLabel:"Fotoana tombanana hivoahan'ny atody",
+ ovulationHint:"Tsy antoka ara-pitsaboana",
+ fertileLabel:"Fotoana mety hahabevohoka",
+ fertileHint:"Mety hitranga ny vohoka manodidina ny ovulation",
+ dayLabel:"Andro amin'ny tsingerina", dayHint:"Araka ny daty nampidirina",
+ timelineTitle:"Fanehoana ny tsingerina",
+ legendPeriod:"Fadimbolana (tombana)", legendFertile:"Fotoana mahavokatra", legendOvu:"Ovulation",
+ tipsTitle:"✚ Torohevitra momba ny fahasalamana",
+ tipsList:[
+ "Raketo ny datin'ny fadimbolanao mba hahafantaranao ny tsingerinao.",
+ "Manaova fitiliana vohoka raha tara ny fadimbolana.",
+ "Mampihena ny mety ho vohoka sy aretina azo avy amin'ny firaisana ny kapaoty.",
+ "Manatòna mpitsabo raha misy fanaintainana mafy na rà tsy mahazatra."
+ ],
+ faqTitle:"Fanontaniana matetika",
+ q1:"Inona ny andro faha-14 amin'ny tsingerina?",
+ a1:"Amin'ny tsingerina 28 andro, mety ho manodidina ny andro faha-14 ny ovulation, saingy miovaova izany. Tsy manamarina ny ovulation ity kajy ity.",
+ q2:"Rahoviana no mety hahabevohoka?",
+ a2:"Mety hitranga ny vohoka rehefa misy firaisana ara-nofo amin'ny fidiran'ny tsirinaina ao amin'ny fivaviana mandritra ny fotoana mahavokatra. Tsy afaka manilika tanteraka ny mety ho vohoka ny kalandrie.",
+ q3:"Afaka misoroka vohoka amin'ity kajy ity ve?",
+ a3:"Tsia. Tsy fomba azo antoka hisorohana vohoka ity kajy ity. Manatòna mpitsabo mba hahazoana torohevitra momba ny fanabeazana aizana.",
+ q4:"Rahoviana no hanaovana fitiliana vohoka?",
+ a4:"Matetika azo atao manomboka amin'ny andro voalohany maha-tara ny fadimbolana ny fitiliana. Raha tsy fantatra ny daty, manaova fitiliana farafahakeliny 21 andro aorian'ny firaisana tsy nampiasa fiarovana.",
+ factsTitle:"Fampahalalana fototra",
+ fact1:"Tsingerim-bolana", fact1Text:"Matetika 21–35 andro amin'ny olon-dehibe.",
+ fact2:"Faharetan'ny fadimbolana", fact2Text:"Miovaova, matetika andro vitsivitsy.",
+ fact3:"Ovulation", fact3Text:"Matetika manodidina ny 14 andro alohan'ny fadimbolana manaraka.",
+ careTitle:"♥ Karakarao ny tenanao",
+ careText:"Samy hafa ny olona tsirairay. Mety hiova isam-bolana ny tsingerina.",
+ urgentTitle:"Rahoviana no manatona mpitsabo?",
+ urgentText:"Raha misy fanaintainana mafy, rà be, fanina na ahiahy ho bevohoka miaraka amin'ny fanaintainana dia mitadiava fitsaboana haingana.",
+ footerText:"ReproSanté — Fitaovana fanabeazana, tsy misolo ny fizahana ataon'ny mpitsabo. Mijanona eto amin'ny pejy ny angona ary tsy alefa amin'ny mpizara.",
+ medicalPrefix:"Tombana ihany ireo daty ireo. Miovaova ny tsingerina ary tsy fomba azo antoka hisorohana vohoka ity kajy ity.",
+ before:"Mbola tsy manomboka araka ny daty nampidirina ny tsingerina.",
+ current:"Andro", past:"andro lasa izay",
+ day:"andro", fertileStatus:"Fotoana tombanana mahavokatra",
+ periodStatus:"Fadimbolana tombanana", ovuStatus:"Ovulation tombanana",
+ notCurrent:"Tsy ampy ny daty hanisana ny andro ankehitriny.",
+ invalid:"Tsy mety io daty io. Hamarino azafady.",
+ range:"Tsy maintsy eo anelanelan'ny 21 sy 35 andro ny tsingerina.",
+ today:"Androany", inDays:"Ato anatin'ny", ago:"Efa lasa",
+ theme:"🌙 Maizina", themeLight:"☀️ Mazava",
+ periodStart:"Daty nanombohan'ny fadimbolana farany: ",
+ nextSentence:"Fadimbolana manaraka tombanana: ",
+ ovulationSentence:"Ovulation tombanana: ",
+ fertileSentence:"Fotoana mety hahabevohoka tombanana: "
+},
+fr: {
+ subtitle:"Votre santé reproductive, notre priorité",
+ eyebrow:"Espace santé féminine",
+ heroTitle:"Comprendre votre cycle, prendre soin de vous.",
+ heroText:"Obtenez des estimations de votre cycle menstruel et découvrez des informations pour mieux comprendre votre santé reproductive.",
+ calcTitle:"♡ Calculateur du cycle menstruel",
+ calcIntro:"Entrez le premier jour de vos dernières règles.",
+ dateLabel:"Date de début des dernières règles",
+ lengthLabel:"Durée du cycle",
+ calculateBtn:"Calculer mon cycle →", resetBtn:"Effacer",
+ resultTitle:"Vos estimations",
+ nextLabel:"Prochaines règles", nextHint:"Date estimée",
+ ovulationLabel:"Ovulation estimée", ovulationHint:"Pas une certitude médicale",
+ fertileLabel:"Période fertile estimée", fertileHint:"Une grossesse est possible autour de l'ovulation",
+ dayLabel:"Jour du cycle", dayHint:"Calculé à partir de la date saisie",
+ timelineTitle:"Visualisation du cycle",
+ legendPeriod:"Règles (estimation)", legendFertile:"Période fertile", legendOvu:"Ovulation",
+ tipsTitle:"✚ Conseils pour votre santé",
+ tipsList:[
+ "Notez les dates de vos règles pour mieux connaître votre cycle.",
+ "Utilisez un test de grossesse si vos règles sont en retard.",
+ "Un préservatif réduit le risque d'infections sexuellement transmissibles et de grossesse.",
+ "Consultez un professionnel de santé en cas de douleurs importantes ou de saignements inhabituels."
+ ],
+ faqTitle:"Questions fréquentes",
+ q1:"Quel est le 14ᵉ jour du cycle ?",
+ a1:"Pour un cycle de 28 jours, l'ovulation peut se produire vers le 14ᵉ jour, mais cela varie. Ce calcul ne confirme pas l'ovulation.",
+ q2:"Quels jours permettent une grossesse ?",
+ a2:"Une grossesse est possible après un rapport vaginal non protégé pendant la période fertile, et le calendrier ne permet pas d'exclure ce risque les autres jours.",
+ q3:"Puis-je éviter une grossesse avec ce calendrier ?",
+ a3:"Non, cette estimation seule n'est pas une méthode contraceptive fiable. Demandez conseil à un professionnel de santé pour choisir une contraception adaptée.",
+ q4:"Quand faire un test de grossesse ?",
+ a4:"Un test urinaire est généralement utile à partir du premier jour de retard des règles. Si vous ne connaissez pas la date prévue, faites-le au moins 21 jours après le dernier rapport non protégé.",
+ factsTitle:"Informations essentielles",
+ fact1:"Cycle menstruel", fact1Text:"Souvent entre 21 et 35 jours chez l'adulte.",
+ fact2:"Durée des règles", fact2Text:"Variable, souvent de quelques jours.",
+ fact3:"Ovulation", fact3Text:"Survient souvent environ 14 jours avant les prochaines règles.",
+ careTitle:"♥ Prenez soin de vous",
+ careText:"Chaque personne est différente. Votre cycle peut varier d'un mois à l'autre.",
+ urgentTitle:"Quand consulter ?",
+ urgentText:"Douleur intense, saignement abondant, malaise ou suspicion de grossesse avec douleur : demandez rapidement des soins. En cas de douleur intense ou de malaise, consultez en urgence.",
+ footerText:"ReproSanté — Outil éducatif, ne remplace pas une consultation médicale. Les données restent dans cette page et ne sont pas envoyées à un serveur.",
+ medicalPrefix:"Ces dates sont des estimations. Les cycles varient et ce calcul n'est pas une méthode contraceptive fiable.",
+ before:"La date saisie se situe dans le futur.",
+ current:"Jour", past:"jours écoulés",
+ day:"jour", fertileStatus:"Période fertile estimée",
+ periodStatus:"Règles estimées", ovuStatus:"Ovulation estimée",
+ notCurrent:"Impossible de calculer le jour actuel du cycle.",
+ invalid:"Date invalide. Veuillez vérifier la date saisie.",
+ range:"La durée du cycle doit être comprise entre 21 et 35 jours.",
+ today:"Aujourd'hui", inDays:"Dans", ago:"Il y a",
+ theme:"🌙 Mode sombre", themeLight:"☀️ Mode clair",
+ periodStart:"Début des dernières règles : ",
+ nextSentence:"Prochaines règles estimées : ",
+ ovulationSentence:"Ovulation estimée : ",
+ fertileSentence:"Période fertile estimée : "
+}
+};
+
+function parseDate(value) {
+  if (!value) return null;
+  const [y,m,d] = value.split("-").map(Number);
+  const date = new Date(y,m-1,d,12);
+  if (date.getFullYear()!==y || date.getMonth()!==m-1 || date.getDate()!==d) return null;
+  return date;
+}
+function addDays(date, days) {
+  const d = new Date(date);
+  d.setDate(d.getDate()+days);
+  return d;
+}
+function dayDiff(a,b) {
+  return Math.round((Date.UTC(a.getFullYear(),a.getMonth(),a.getDate())-
+    Date.UTC(b.getFullYear(),b.getMonth(),b.getDate()))/86400000);
+}
+function fmt(date) {
+  return new Intl.DateTimeFormat(language==="fr"?"fr-FR":"mg-MG", {
+    day:"numeric",month:"short",year:"numeric"
+  }).format(date);
+}
+function text(id,value) { $(id).textContent=value; }
+
+function calculate(e) {
+  if(e) e.preventDefault();
+  const t=translations[language];
+  const start=parseDate($("lastPeriod").value);
+  const length=Number($("cycleLength").value);
+  const today=new Date();
+  today.setHours(12,0,0,0);
+
+  if(!start) { alert(t.invalid); return; }
+  if(start>today) { alert(t.invalid); return; }
+  if(length<21||length>35) { alert(t.range); return; }
+
+  const next=addDays(start,length);
+  const ovulation=addDays(start,length-14);
+  const fertileStart=addDays(ovulation,-5);
+  const fertileEnd=addDays(ovulation,1);
+  const elapsed=dayDiff(today,start);
+  const day=(elapsed%length)+1;
+
+  text("nextDate",fmt(next));
+  text("ovulationDate",fmt(ovulation));
+  text("fertileDates",fmt(fertileStart)+" – "+fmt(fertileEnd));
+
+  text("cycleDay",elapsed>=0?
+    (language==="fr"?"Jour ":"Andro ")+day+" / "+length:
+    t.notCurrent);
+
+  text("resultDescription",t.periodStart+fmt(start));
+  text("medicalNote","ℹ️ "+t.medicalPrefix);
+  const timeline=$("timeline");
+  timeline.replaceChildren();
+
+  for(let i=1;i<=length;i++){
+    const d=document.createElement("div");
+    d.className="day";
+    if(i<=5) d.classList.add("period");
+    else if(i===length-14+1) d.classList.add("ovulation");
+    else if(i>=length-14-4 && i<=length-14+1) d.classList.add("fertile");
+
+    d.textContent=i;
+    d.title=(language==="fr"?"Jour ":"Andro ")+i;
+    timeline.appendChild(d);
+  }
+  $("results").classList.add("show");
+  $("results").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+function setLanguage(lang) {
+  language=lang;
+  const t=translations[lang];
+  document.documentElement.lang=lang;
+  Object.keys(t).forEach(id=>{
+    if($(id) && typeof t[id]==="string") text(id,t[id]);
+  });
+  $("tipsList").replaceChildren();
+  t.tipsList.forEach(item=>{
+    const li=document.createElement("li");
+    li.textContent=item;
+    $("tipsList").appendChild(li);
+  });
+  $("langBtn").textContent=lang==="fr"?"🇲🇬 Malagasy":"🇫🇷 Français";
+  $("themeBtn").textContent=document.body.classList.contains("dark")?t.themeLight:t.theme;
+  if($("results").classList.contains("show")) calculate();
+}
+$("cycleForm").addEventListener("submit",calculate);
+$("cycleForm").addEventListener("reset",()=>{
+  $("results").classList.remove("show");
+});
+$("langBtn").addEventListener("click",()=>setLanguage(language==="fr"?"mg":"fr"));
+$("themeBtn").addEventListener("click",()=>{
+  document.body.classList.toggle("dark");
+  const t=translations[language];
+  $("themeBtn").textContent=document.body.classList.contains("dark")?t.themeLight:t.theme;
+});
+document.querySelectorAll("nav button").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    $(btn.dataset.target).scrollIntoView({behavior:"smooth"});
+  });
+});
+
+// Date locale : pas de date future dans le champ.
+const now=new Date();
+const localToday=[now.getFullYear(),String(now.getMonth()+1).padStart(2,"0"),
+  String(now.getDate()).padStart(2,"0")].join("-");
+$("lastPeriod").max=localToday;
+</script>
+</body>
+</html>
